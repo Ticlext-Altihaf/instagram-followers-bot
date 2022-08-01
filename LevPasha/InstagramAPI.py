@@ -50,6 +50,8 @@ class InstagramAPI:
     def login(self, force = False):
         if (not self.isLoggedIn or force):
             self.s = requests.Session()
+            if self.proxies:
+                self.s.proxies.update(self.proxies)
             if (self.SendRequest('si/fetch_headers/?challenge_type=signup&guid=' + self.generateUUID(False), None, True)):
 
                 data = {'phone_id'   : self.generateUUID(True),
