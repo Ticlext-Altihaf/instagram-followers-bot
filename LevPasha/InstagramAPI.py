@@ -44,6 +44,9 @@ class InstagramAPI:
         self.LastResponse = None
         self.proxy = proxy
 
+    def setProxy(self, proxy):
+        self.proxy = proxy
+
     def setUser(self, username, password):
         self.username = username
         self.password = password
