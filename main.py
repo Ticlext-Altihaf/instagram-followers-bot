@@ -1,3 +1,4 @@
+import json
 import os
 
 import aux_funcs
@@ -21,21 +22,44 @@ if args.proxy is not None:
     print("Using proxy: " + proxy)
     proxy = {"http": proxy, "https": proxy}
 
-api = InstagramAPI(args.user, args.password)
+
 
 ### Delay in seconds ###
 min_delay = 5
 max_delay = 10
 MAXIMO = 100
 
+# Quota/days
+quota = {
+    "follow": 50,
+    "unfollow": 50,
+    "like": 50,
+    "comment": 50,
+    "last_reset": time.time()
+}
+
+# check quota.json
+
+if not os.path.isfile("quota.json"):
+    with open("quota.json", "w") as f:
+        json.dump(quota, f)
+
+with open("quota.json") as f:
+    quotaJson = json.load(f)
+    if quotaJson["last_reset"] + (60 * 60 * 24) < time.time():
+        with open("quota.json", "w") as f:
+            json.dump(quota, f)
+    else:
+        quota = quotaJson
+
+api = InstagramAPI(args.user, args.password, proxy=proxy, quota=quota)
 
 def printUsage():
     print("Usage: \n+ python main.py -u USERNAME -p PASSWORD -o info: Show report")
     print("+ python main.py -u USERNAME -p PASSWORD -o follow-tag -t TAG: Follow users using the tags you introduce")
     print("+ python main.py -u USERNAME -p PASSWORD -o follow-location -t LOCATION_ID: Follow users from a location")
     print("+ python main.py -u USERNAME -p PASSWORD -o follow-list -t USER_LIST: Follow users from a file")
-    print(
-        "+ python main.py -u USERNAME -p PASSWORD -o super-followback: Follow back all the users who you dont follow back")
+    print("+ python main.py -u USERNAME -p PASSWORD -o super-followback: Follow back all the users who you dont follow back")
     print("+ python main.py -u USERNAME -p PASSWORD -o super-unfollow: Unfollow all the users who dont follow you back")
     print("+ python main.py -u USERNAME -p PASSWORD -o unfollow-all: Unfollow all the users")
 
