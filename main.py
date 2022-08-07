@@ -39,15 +39,15 @@ quota = {
 }
 
 # check quota.json
-
-if not os.path.isfile("quota.json"):
-    with open("quota.json", "w") as f:
+quotaFilename = args.user + "-quota.json"
+if not os.path.isfile(quotaFilename):
+    with open(quotaFilename, 'w') as f:
         json.dump(quota, f)
 
-with open("quota.json") as f:
+with open(quotaFilename, 'r') as f:
     quotaJson = json.load(f)
     if quotaJson["last_reset"] + (60 * 60 * 24) < time.time():
-        with open("quota.json", "w") as f:
+        with open(quotaFilename, 'w') as f:
             json.dump(quota, f)
     else:
         quota = quotaJson
